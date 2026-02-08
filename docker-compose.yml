@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    env_file:
+      - .env
+    # environment:
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wpuser
+    #   MYSQL_PASSWORD: wppass
+    #   MYSQL_ROOT_PASSWORD: rootpass
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:php8.2-apache
+    restart: always
+    ports:
+      - "8080:80"
+    env_file:
+      - .env
+    # environment:
+    #   WORDPRESS_DB_HOST: mysql
+    #   WORDPRESS_DB_USER: wpuser
+    #   WORDPRESS_DB_PASSWORD: wppass
+    #   WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./wordpress:/var/www/html
+    depends_on:
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      # PMA_USER: root
+      # PMA_PASSWORD: rootpass
+    depends_on:
+      - mysql
